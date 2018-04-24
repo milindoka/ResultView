@@ -1017,7 +1017,7 @@ SetPrinter sp;
       
       if (gracecount>3 || gracetotal>15) { Remark="FAIL"; return; }
       
-      for (int i=0; i<6;i++) if(grace[i]>5) { Remark="FAIL"; return; }
+      for (int i=0; i<6;i++) if(grace[i]>10) { Remark="FAIL"; return; }
       
       if(evs<18) { Remark="FAIL"; return;}
       
@@ -1047,20 +1047,50 @@ SetPrinter sp;
      if(!Remark.contains("FAIL")) { plate=String.format("%d",dist);  SetData(plate,8,2); return;}
      int sort[]={0,1,2,3,4,5};
      int temp;
+     
+     
      for(int i=0;i<5;i++)
     	 for(int j=i+1;j<6;j++)
     		 if(subtotal[sort[i]]>subtotal[sort[j]]) 
     		  {temp=sort[i];sort[i]=sort[j];sort[j]=temp; }
+   
      
+     
+     
+     int gap=0,gres5=0,gresoverflow=0,gres15;
+     // only lowest mark should be pushed to 10
+     if(subtotal[sort[0]]<49) {  gap=49-subtotal[sort[0]];
+                                  dist=dist+gap;
+                                  gres5=grace[sort[1]]+grace[sort[2]];
+                                  if(gres5>5) 
+                                  { gresoverflow=2*(gres5-5);
+                                    if(subtotal[sort[1]]%2==0) gresoverflow--;
+                                    if(subtotal[sort[2]]%2==0) gresoverflow--;
+                                  }
+                                  dist=dist+gresoverflow;
+                                  
+     							}
+     else
+     { gres15=grace[sort[0]]+grace[sort[1]]+grace[sort[2]];
+       if(gres15>15)
+       {gresoverflow=2*(gres15-15);
+       if(subtotal[sort[0]]%2==0) gresoverflow--;
+       if(subtotal[sort[1]]%2==0) gresoverflow--;
+       if(subtotal[sort[2]]%2==0) gresoverflow--;	   
+       }
+       dist=dist+gresoverflow;
+     }
+     
+    /* 
      for(int i=0;i<3;i++) if(subtotal[sort[i]]<59)        
-      {  int gap=59-subtotal[sort[i]];
+      {  gap=59-subtotal[sort[i]];
          plate=String.format("%d",gap);
     	 SetData(plate,8,3+sort[i]);
     	 dist=dist+gap;
       }
-     
+     */
      for(int i=3;i<6;i++) if(subtotal[sort[i]]<69)
-    	 { int gap=69-subtotal[sort[i]];
+    	 { gap=69-subtotal[sort[i]];
          plate=String.format("%d",gap);
     	 SetData(plate,8,3+sort[i]);
     	 dist=dist+gap;
